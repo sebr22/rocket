@@ -5,13 +5,11 @@ Install circuit python from [here](https://learn.adafruit.com/circuitpython-on-r
 ```
 pip install -r requirements.txt
 ```
-<br>
 
 ## Usage
 ```
 python3 main.py
 ```
-<br>
 
 ## Demo
 <div align="center">
