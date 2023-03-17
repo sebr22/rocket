@@ -20,6 +20,7 @@ import adafruit_bh1750
 
 #sudo pip3 install adafruit-circuitpython-gps
 import adafruit_gps
+import serial
 
 import csv
 
@@ -38,7 +39,7 @@ i2cPress = busio.I2C(board.SCL, board.SDA)
 lps = adafruit_lps2x.LPS25(i2cPress)
 
 #gps
-uart = busio.UART(board.TX, board.RX, baudrate=9600, timeout=10)
+uart = serial.Serial("/dev/ttyS0", baudrate=9600, timeout=1)
 gps = adafruit_gps.GPS(uart, debug=False)
 gps.send_command(b"PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
 gps.send_command(b"PMTK220,1000")
