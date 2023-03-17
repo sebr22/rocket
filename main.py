@@ -18,11 +18,16 @@ import adafruit_lps2x
 #sudo pip3 install adafruit-circuitpython-bh1750
 import adafruit_bh1750
 
-#sudo pip3 install adafruit-circuitpython-gps
-import adafruit_gps
-import serial
-
 import csv
+
+# GPS
+import adafruit_gps
+i2c = board.I2C()  
+gps = adafruit_gps.GPS_GtopI2C(i2c, debug=False)
+gps.send_command(b"PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
+gps.send_command(b"PMTK220,1000")
+last_print = time.monotonic()
+# END GPS
 
 #CO2
 i2cCO = board.I2C()
@@ -30,7 +35,7 @@ scd4x = adafruit_scd4x.SCD4X(i2cCO)
 print("Serial number:", [hex(i) for i in scd4x.serial_number])
 
 # FILE NAME
-file = str(time.time()) + ".csv"
+file = "test.csv"
 fp = open(file, 'x')
 fp.close()
 
@@ -38,23 +43,41 @@ fp.close()
 i2cPress = busio.I2C(board.SCL, board.SDA)
 lps = adafruit_lps2x.LPS25(i2cPress)
 
-#gps
-uart = serial.Serial("/dev/ttyS0", baudrate=9600, timeout=1)
-gps = adafruit_gps.GPS(uart, debug=False)
-gps.send_command(b"PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
-gps.send_command(b"PMTK220,1000")
-
-
 scd4x.start_periodic_measurement()
 print("Waiting for first measurement....")
 
 with open(file, mode='a') as list:
     data = csv.writer(list)
-    data.writerow(["Date", "CO2", "Humidity", "Pressure", "Temperature"])
+    data.writerow(["Date", "CO2", "Humidity", "Pressure", "Temperature", "Latitude", "Longitude", "Altitude","Speed","Track Angle","Horizontal Dilution","Height GeoID", "Fix Quality", "Num Satelites"])
+
+# while True:
+
+
+    # if scd4x.data_ready:
+    #     print("CO2: %d ppm" % scd4x.CO2)
+    #     print("Humidity: %0.1f %%" % scd4x.relative_humidity)
+    #     print("Pressure: %.2f hPa" % lps.pressure)
+    #     print("Temperature: %.2f C" % lps.temperature)
+
+    #     with open(file, mode='a') as list:
+    #         data = csv.writer(list)
+    #         data.writerow([datetime.datetime.now(), scd4x.CO2, scd4x.relative_humidity, lps.pressure, lps.temperature])
+
+    #     print("\n \n")
 
 while True:
     if scd4x.data_ready:
-        #gps
+        print("CO2: %d ppm" % scd4x.CO2)
+        print("Humidity: %0.1f %%" % scd4x.relative_humidity)
+        print("Pressure: %.2f hPa" % lps.pressure)
+        print("Temperature: %.2f C" % lps.temperature)
+
+
+        
+        # Make sure to call gps.update() every loop iteration and at least twice
+        # as fast as data comes from the GPS unit (usually every second).
+        # This returns a bool that's true if it parsed new data (you can ignore it
+        # though if you don't care and instead look at the has_fix property).
         gps.update()
         # Every second print out current location details if there's a fix.
         current = time.monotonic()
@@ -79,16 +102,19 @@ while True:
             )
             print("Latitude: {0:.6f} degrees".format(gps.latitude))
             print("Longitude: {0:.6f} degrees".format(gps.longitude))
-            print(
-                "Precise Latitude: {:2.}{:2.4f} degrees".format(
-                    gps.latitude_degrees, gps.latitude_minutes
-                )
-            )
-            print(
-                "Precise Longitude: {:2.}{:2.4f} degrees".format(
-                    gps.longitude_degrees, gps.longitude_minutes
-                )
-            )
+            print(gps.longitude)
+
+            # print(
+            #     "Precise Latitude: {:2.}{:2.4f} degrees".format(
+            #         gps.latitude_degrees, gps.latitude_minutes
+            #     )
+            # )
+            # print(
+            #     "Precise Longitude: {:2.}{:2.4f} degrees".format(
+            #         gps.longitude_degrees, gps.longitude_minutes
+            #     )
+            # )
+
             print("Fix quality: {}".format(gps.fix_quality))
             # Some attributes beyond latitude, longitude and timestamp are optional
             # and might not be present.  Check if they're None before trying to use!
@@ -104,14 +130,8 @@ while True:
                 print("Horizontal dilution: {}".format(gps.horizontal_dilution))
             if gps.height_geoid is not None:
                 print("Height geoid: {} meters".format(gps.height_geoid))
-        #end gps
-        print("CO2: %d ppm" % scd4x.CO2)
-        print("Humidity: %0.1f %%" % scd4x.relative_humidity)
-        print("Pressure: %.2f hPa" % lps.pressure)
-        print("Temperature: %.2f C" % lps.temperature)
-
-        with open(file, mode='a') as list:
-            data = csv.writer(list)
-            data.writerow([datetime.datetime.now(), scd4x.CO2, scd4x.relative_humidity, lps.pressure, lps.temperature])
-
-        print("\n \n")
+            
+            with open(file, mode='a') as list:
+                data = csv.writer(list)
+                data.writerow([datetime.datetime.now(), scd4x.CO2, scd4x.relative_humidity, lps.pressure, lps.temperature, gps.latitude, gps.longitude, gps.altitude_m, gps.speed_knots, gps.track_angle_deg, gps.horizontal_dilution, gps.height_geoid, gps.fix_quality, gps.satellites])
+            print("\n \n")
