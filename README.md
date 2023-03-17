@@ -14,5 +14,5 @@ python3 main.py
 
 ## Demo
 <div align="center">
-  <img width="95%" alt="Raspberry Pi with sensors" src="./assets/demo.jpg">
+  <img width="95%" alt="Raspberry Pi with sensors" src="./demo.jpg">
 </div>
