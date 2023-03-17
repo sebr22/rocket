@@ -1,3 +1,4 @@
 adafruit-circuitpython-bh1750
 adafruit-circuitpython-scd4x
 adafruit-circuitpython-lps2x
+adafruit-circuitpython-gps
