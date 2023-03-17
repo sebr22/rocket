@@ -1,7 +1,7 @@
 # Rocket Sensors
 
-### There are Two Versions of the Software, the test branch with GPS functionality and the main without.
 ## Installation
+### There are Two Versions of the Software, the test branch with GPS functionality and the main without.
 Install circuit python from [here](https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/installing-circuitpython-on-raspberry-pi)
 ```
 pip install -r requirements.txt
