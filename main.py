@@ -48,7 +48,7 @@ print("Waiting for first measurement....")
 
 with open(file, mode='a') as list:
     data = csv.writer(list)
-    data.writerow(["Date", "CO2", "Humidity", "Pressure", "Temperature", "Latitude", "Longitude", "Altitude","Speed","Track Angle","Horizontal Dilution","Height GeoID", "Fix Quality", "Num Satelites"])
+    data.writerow(["Date", "CO2", "Humidity", "Pressure", "Temperature", "Latitude", "Longitude", "Altitude","Speed","Track Angle","Horizontal Dilution","Height GeoID", "Fix Quality", "Num Satelites", "Latitude Degrees", "Latitude Minutes","Longitude Degrees","Longitude Minutes"])
 
 # while True:
 
@@ -133,5 +133,5 @@ while True:
             
             with open(file, mode='a') as list:
                 data = csv.writer(list)
-                data.writerow([datetime.datetime.now(), scd4x.CO2, scd4x.relative_humidity, lps.pressure, lps.temperature, gps.latitude, gps.longitude, gps.altitude_m, gps.speed_knots, gps.track_angle_deg, gps.horizontal_dilution, gps.height_geoid, gps.fix_quality, gps.satellites])
+                data.writerow([datetime.datetime.now(), scd4x.CO2, scd4x.relative_humidity, lps.pressure, lps.temperature, gps.latitude, gps.longitude, gps.altitude_m, gps.speed_knots, gps.track_angle_deg, gps.horizontal_dilution, gps.height_geoid, gps.fix_quality, gps.satellites, gps.latitude_degrees, gps.latitude_minutes,gps.longitude_degrees, gps.longitude_minutes])
             print("\n \n")
